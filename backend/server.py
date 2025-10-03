@@ -4,6 +4,7 @@ from Cricket_analyzer import analyze
 from cric import analyze_bowling_stats
 from dsa import batter_vs_bowler_graph
 from dsa_info import cricket_analysis
+from batting_sort import sort_batting_stats
 
 # create app instance
 app = FastAPI()
@@ -57,6 +58,9 @@ def cricket_analysis_api():
             "fours": stats["4s"],
             "sixes": stats["6s"]
         })
+
+    sorted_batters_teamA = sort_batting_stats(batter_list)
+    sorted_batters_teamB = sort_batting_stats(batterB_list)
 
     # --- Bowlers ---
 
@@ -170,6 +174,17 @@ def cricket_analysis_api():
     return {
         "batters": batter_list,
         "battersB": batterB_list,
+
+        "batters_sorted_runs": sorted_batters_teamA["sorted_by_runs"],
+        "batters_sorted_sr": sorted_batters_teamA["sorted_by_sr"],
+        "batters_sorted_fours": sorted_batters_teamA["sorted_by_fours"],
+        "batters_sorted_sixes": sorted_batters_teamA["sorted_by_sixes"],
+
+        "battersB_sorted_runs": sorted_batters_teamB["sorted_by_runs"],
+        "battersB_sorted_sr": sorted_batters_teamB["sorted_by_sr"],
+        "battersB_sorted_fours": sorted_batters_teamB["sorted_by_fours"],
+        "battersB_sorted_sixes": sorted_batters_teamB["sorted_by_sixes"],
+        
         "bowlers_wickets": bowler_list["sorted_by_wickets"],
         "bowlers_runs": bowler_list["sorted_by_runs"],
         "bowlers_economy": bowler_list["sorted_by_economy"],

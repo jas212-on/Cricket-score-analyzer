@@ -21,6 +21,10 @@ const CricketAnalyzer = () => {
   const[bowlerBWickets, setBowlerBWickets] = useState(null);
   const[bowlerBEconomy, setBowlerBEconomy] = useState(null);
   const [oversData,setOversData] = useState(null);
+  const [sortedBattingData, setSortedBattingData] = useState({
+    teamA: { runs: [], sr: [], fours: [], sixes: [] },
+    teamB: { runs: [], sr: [], fours: [], sixes: [] }
+  });
 
 
   const CustomTooltip = ({ active, payload }) => {
@@ -55,6 +59,23 @@ const CricketAnalyzer = () => {
         setBowlerBRuns(data.bowlers_runs);
         setBowlerBWickets(data.bowlers_wickets);
         setBowlerBEconomy(data.bowlers_economy);
+
+        setSortedBattingData({
+          teamA: {
+            runs: data.battersB_sorted_runs,
+            sr: data.battersB_sorted_sr,
+            fours: data.battersB_sorted_fours,
+            sixes: data.battersB_sorted_sixes
+          },
+          teamB: {
+            runs: data.batters_sorted_runs,
+            sr: data.batters_sorted_sr,
+            fours: data.batters_sorted_fours,
+            sixes: data.batters_sorted_sixes
+          }
+        });
+
+
         setMatchData({
           teamA: {
             name: "Pakistan",
@@ -135,8 +156,8 @@ const CricketAnalyzer = () => {
   }, []);
 
   const getSortedBattingStats = (stat) => {
-    const stats = matchData.battingStats[selectedTeam];
-    return stats;
+    // Return the pre-sorted data from heap sort
+    return sortedBattingData[selectedTeam][stat] || [];
   };
 
   const getSortedBowlingStats = (stat) => {
