@@ -9,6 +9,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import CricketWinPredictor from "./WinPredictor";
 
 const CricketAnalyzer = () => {
   const [selectedBattingStat, setSelectedBattingStat] = useState(null);
@@ -25,6 +26,11 @@ const CricketAnalyzer = () => {
     teamA: { runs: [], sr: [], fours: [], sixes: [] },
     teamB: { runs: [], sr: [], fours: [], sixes: [] }
   });
+  const [sortedBowlingData, setSortedBowlingData] = useState({
+    teamA: { runs: [], wickets:[], economy:[] },
+    teamB: { runs: [], wickets:[], economy:[] }
+  });
+  const[predictingData,setPredictingData] = useState(null);
 
 
   const CustomTooltip = ({ active, payload }) => {
@@ -59,7 +65,7 @@ const CricketAnalyzer = () => {
         setBowlerBRuns(data.bowlers_runs);
         setBowlerBWickets(data.bowlers_wickets);
         setBowlerBEconomy(data.bowlers_economy);
-
+        setPredictingData(data.predictingData)
         setSortedBattingData({
           teamA: {
             runs: data.battersB_sorted_runs,
@@ -75,6 +81,19 @@ const CricketAnalyzer = () => {
           }
         });
 
+        setSortedBowlingData({
+          teamA: {
+            runs: data.bowlers_runs,
+            wickets : data.bowlers_wickets,
+            economy : data.bowlers_economy
+          },
+          teamB: {
+            runs: data.bowlers_runsB,
+            wickets : data.bowlers_wicketsB,
+            economy : data.bowlers_economyB
+          },
+        });
+
 
         setMatchData({
           teamA: {
@@ -88,55 +107,6 @@ const CricketAnalyzer = () => {
             score: "150/5",
             overs: "19.4",
             won: true,
-          },
-          battingStats: {
-            teamA: data.battersB,
-            teamB: data.batters
-          },
-          bowlingStats: {
-            teamA: data.bowlers,
-            teamB: [
-              {
-                player: "Deepak Chahar",
-                overs: 4,
-                runs: 28,
-                wickets: 3,
-                economy: 7.0,
-                maidens: 0,
-              },
-              {
-                player: "Matheesha Pathirana",
-                overs: 4,
-                runs: 35,
-                wickets: 2,
-                economy: 8.75,
-                maidens: 0,
-              },
-              {
-                player: "Tushar Deshpande",
-                overs: 4,
-                runs: 48,
-                wickets: 0,
-                economy: 12.0,
-                maidens: 0,
-              },
-              {
-                player: "Ravindra Jadeja",
-                overs: 4,
-                runs: 36,
-                wickets: 1,
-                economy: 9.0,
-                maidens: 0,
-              },
-              {
-                player: "Moeen Ali",
-                overs: 4,
-                runs: 38,
-                wickets: 0,
-                economy: 9.5,
-                maidens: 0,
-              },
-            ],
           },
           partnerships: {
             teamA: data.partnershipsB,
@@ -161,17 +131,7 @@ const CricketAnalyzer = () => {
   };
 
   const getSortedBowlingStats = (stat) => {
-    if(selectedTeam==="teamA"){
-      if (stat === "economy") {
-      return bowlerBEconomy; // Ascending for economy
-    }else if(stat === "wickets"){
-      return bowlerBWickets;
-    }else{
-      return bowlerBRuns;
-    }
-    }
-    const stats = matchData.bowlingStats[selectedTeam];
-    return stats;
+    return sortedBowlingData[selectedTeam][stat] || [];
   };
 
   const BattingStatButton = ({ stat, label, icon: Icon }) => (
@@ -448,13 +408,13 @@ const CricketAnalyzer = () => {
                           </div>
                           <div className="text-sm text-slate-600">
                             {player.wickets}-{player.runs} ({player.overs} ov) •
-                            Econ: {player.economy}
+                            Econ: {player.economy.toFixed(2)}
                           </div>
                         </div>
                       </div>
                       <div className="text-2xl font-bold text-green-600">
                         {selectedBowlingStat === "economy"
-                          ? player[selectedBowlingStat].toFixed(1)
+                          ? player[selectedBowlingStat].toFixed(2)
                           : player[selectedBowlingStat]}
                       </div>
                     </div>
@@ -737,6 +697,9 @@ const CricketAnalyzer = () => {
             
           </div>
         </div>
+
+        {/*Prediction */}
+        <CricketWinPredictor predictingData={predictingData} />
 
         {/* Over Summary */}
         <div className="w-full min-h-screen  p-8 flex flex-col items-center justify-center">

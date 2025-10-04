@@ -5,8 +5,8 @@ def analyze_bowling_stats(bowlers_data):
     Analyze bowling statistics using heaps
     
     Args:
-        bowlers_data: List of dictionaries with structure:
-                     {bowler_name: {'overs': [1,2,4], 'runs': 20, 'wickets': 2}}
+        bowlers_data: Dictionary with structure:
+                     {'bowler_name': {'overs': [1,2,4], 'runs': 20, 'wickets': 2}, ...}
     
     Returns:
         Dictionary containing sorted lists by different metrics
@@ -21,30 +21,29 @@ def analyze_bowling_stats(bowlers_data):
     results = {}
     
     # Process each bowler
-    for bowler_dict in bowlers_data:
-        for bowler_name, stats in bowler_dict.items():
-            overs = stats['overs']
-            runs = stats['runs']
-            wickets = stats['wickets']
-            
-            # Calculate total overs bowled
-            total_overs = sum(overs)
-            
-            # Calculate economy rate (runs per over)
-            if total_overs > 0:
-                economy = runs / total_overs
-            else:
-                economy = 0
-            
-            # Push to heaps
-            # Economy heap - Min heap (ascending order - best economy first)
-            heapq.heappush(economy_heap, (economy, bowler_name, runs, wickets, total_overs))
-            
-            # Runs heap - Min heap (ascending order - least runs first)
-            heapq.heappush(runs_heap, (runs, bowler_name, economy, wickets, total_overs))
-            
-            # Wickets heap - Max heap (descending order - most wickets first)
-            heapq.heappush(wickets_heap, (-wickets, bowler_name, economy, runs, total_overs))
+    for bowler_name, stats in bowlers_data.items():
+        overs = stats['overs']
+        runs = stats['runs']
+        wickets = stats['wickets']
+        
+        # Calculate total overs bowled
+        total_overs = len(overs)
+        
+        # Calculate economy rate (runs per over)
+        if total_overs > 0:
+            economy = runs / total_overs
+        else:
+            economy = 0
+        
+        # Push to heaps
+        # Economy heap - Min heap (ascending order - best economy first)
+        heapq.heappush(economy_heap, (economy, bowler_name, runs, wickets, total_overs))
+        
+        # Runs heap - Min heap (ascending order - least runs first)
+        heapq.heappush(runs_heap, (runs, bowler_name, economy, wickets, total_overs))
+        
+        # Wickets heap - Max heap (descending order - most wickets first)
+        heapq.heappush(wickets_heap, (-wickets, bowler_name, economy, runs, total_overs))
     
     # i) Sort by Economy (Ascending)
     sorted_by_economy = []
@@ -127,15 +126,22 @@ def print_results(results):
 
 # Example usage
 if __name__ == "__main__":
-    # Sample bowling data
-    bowlers_data = [{'Shaheen Shah Afridi': {'overs': [1, 3, 5, 17], 'runs': 20, 'wickets': 1}}, {'Faheem': {'overs': [2, 4, 6, 19], 'runs': 29, 'wickets': 3}}, {'Nawaz': {'overs': [7], 'runs': 6, 'wickets': 0}}, {'Haris Rauf': {'overs': [8, 15, 18, 20], 'runs': 50, 'wickets': 0}}, {'Abrar Ahmed': {'overs': [9, 11, 13, 16], 'runs': 29, 'wickets': 1}}, {'Saim Ayub': {'overs': [10, 12, 14], 'runs': 16, 'wickets': 0}}]
+    # Sample bowling data - Single dictionary with all bowlers
+    bowlers_data = {
+        'Shaheen Shah Afridi': {'overs': [1, 3, 5, 17], 'runs': 20, 'wickets': 1},
+        'Faheem': {'overs': [2, 4, 6, 19], 'runs': 29, 'wickets': 3},
+        'Nawaz': {'overs': [7], 'runs': 6, 'wickets': 0},
+        'Haris Rauf': {'overs': [8, 15, 18, 20], 'runs': 50, 'wickets': 0},
+        'Abrar Ahmed': {'overs': [9, 11, 13, 16], 'runs': 29, 'wickets': 1},
+        'Saim Ayub': {'overs': [10, 12, 14], 'runs': 16, 'wickets': 0}
+    }
     
     # Analyze bowling statistics
     results = analyze_bowling_stats(bowlers_data)
     
-    # Print results
-    print(results)
+    # Print formatted results
+    print_results(results)
     
-    print("\n\nYou can add more bowlers to the list and run again!")
+    print("\n\nYou can add more bowlers to the dictionary and run again!")
     print("\nExample format:")
     print('{"BowlerName": {"overs": [1,2,4], "runs": 20, "wickets": 2}}')

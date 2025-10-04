@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from Cricket_analyzer import analyze
+from predictor import predict
 from cric import analyze_bowling_stats
 from dsa import batter_vs_bowler_graph
 from dsa_info import cricket_analysis
@@ -26,6 +27,113 @@ def cricket_analysis_api():
     runsB=[0,0,0,0,4,0,"LB1",0,0,2,4,0,1,1,1,1,0,4,4,0,6,1,"B1",1,0,1,0,2,1,1,0,0,1,2,1,4,1,1,1,0,2,6,1,2,0,4,1,0,"WD",1,6,"B1",2,1,1,0,1,6,"W",1,2,1,1,4,0,4,1,1,4,0,1,1,2,"WD",0,1,"WD",2,1,"W",0,0,1,"W",1,1,2,2,0,6,"W",1,1,2,1,"W",0,1,1,"W",0,"WD",0,"W",0,"W",1,4,0,2,"W",0,2,0,0,1,1,1,"W"]
     bowlersB=["Shivam Dube","Jasprit Bumrah","Shivam Dube","Jasprit Bumrah","Varun Chakaravarthy","Axar Patel","Kuldeep Yadav","Axar Patel","Kuldeep Yadav","Varun Chakaravarthy","Shivam Dube","Tilak Varma","Kuldeep Yadav","Axar Patel","Varun Chakaravarthy","Axar Patel","Kuldeep Yadav","Jasprit Bumrah","Varun Chakaravarthy","Jasprit Bumrah"]
     battersB=["Sahibzada Farhan","Fakhar Zaman","Saim Ayub","Mohammad Haris","Salman Ali Agha","Hussain Talt","Mohammad Nawaz","Shaheen Afridi","Faheem Ashraf","Haris Rauf","Abrar Ahmed"]
+
+    batter_bowler_probs = {
+    "Abhishek Sharma": {
+        "Shaheen Shah Afridi": {0:0.30,1:0.25,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.28,1:0.27,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Shubman Gill": {
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.20,1:0.35,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.22,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Nawaz": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Suryakumar Yadav": {
+        "Shaheen Shah Afridi": {0:0.20,1:0.25,2:0.05,3:0.05,4:0.25,6:0.10,'W':0.10},
+        "Faheem": {0:0.22,1:0.25,2:0.05,3:0.05,4:0.25,6:0.08,'W':0.10},
+        "Haris Rauf": {0:0.20,1:0.25,2:0.05,3:0.05,4:0.25,6:0.10,'W':0.10},
+        "Nawaz": {0:0.20,1:0.25,2:0.05,3:0.05,4:0.25,6:0.10,'W':0.10},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Tilak Varma": {
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Sanju Samson": {
+        "Shaheen Shah Afridi": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.10,'W':0.08},
+        "Faheem": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.10,'W':0.08},
+        "Haris Rauf": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.10,'W':0.08},
+        "Nawaz": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.10,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Shivam Dube": {
+        "Shaheen Shah Afridi": {0:0.20,1:0.20,2:0.05,3:0.02,4:0.25,6:0.20,'W':0.08},
+        "Faheem": {0:0.20,1:0.20,2:0.05,3:0.02,4:0.25,6:0.20,'W':0.08},
+        "Haris Rauf": {0:0.20,1:0.20,2:0.05,3:0.02,4:0.25,6:0.20,'W':0.08},
+        "Nawaz": {0:0.20,1:0.20,2:0.05,3:0.02,4:0.25,6:0.20,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Rinku Singh": {
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.22,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Axar Patel":{
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.22,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Kuldeep Yadav":{
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.22,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Varun Chakaravarthy":{
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.22,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    },
+    "Jasprit Bumrah":{
+        "Shaheen Shah Afridi": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Faheem": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Haris Rauf": {0:0.22,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Nawaz": {0:0.25,1:0.30,2:0.05,3:0.02,4:0.25,6:0.05,'W':0.08},
+        "Abrar Ahmed": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08},
+        "Saim Ayub": {0:0.20,1:0.30,2:0.05,3:0.02,4:0.25,6:0.08,'W':0.08}
+    }
+    }
+
+    skill = {
+    "Abhishek Sharma": 1.0,
+    "Shubman Gill": 1.0,
+    "Suryakumar Yadav": 1.0,
+    "Tilak Varma": 0.95,
+    "Sanju Samson": 1.0,
+    "Shivam Dube": 0.95,
+    "Rinku Singh": 0.90,
+    "Axar Patel": 0.7,   # example tail-ender (weaker batting)
+    "Kuldeep Yadav": 0.65,
+    "Varun Chakaravarthy": 0.6,
+    "Jasprit Bumrah": 0.6
+    }
+
+    predictingdata = predict(runs, batters, bowlers, 147, 20,batter_bowler_probs,skill,{})
 
     batter_info, bowler_info, extras, head = cricket_analysis(runs, bowlers, batters)    
     batterB_info, bowler_infoB, extrasB, headB = cricket_analysis(runsB, bowlersB, battersB) 
@@ -64,13 +172,9 @@ def cricket_analysis_api():
 
     # --- Bowlers ---
 
-    bowler_input = []
-    for i in bowler_info:
-        d={}
-        d[i]=bowler_info[i]
-        bowler_input.append(d)
-    bowler_list = analyze_bowling_stats(bowler_input)
-    print(bowler_input)
+   
+    bowler_list = analyze_bowling_stats(bowler_info)
+    bowler_listB = analyze_bowling_stats(bowler_infoB)
 
     # --- Overs summary ---
     overs = []
@@ -188,12 +292,17 @@ def cricket_analysis_api():
         "bowlers_wickets": bowler_list["sorted_by_wickets"],
         "bowlers_runs": bowler_list["sorted_by_runs"],
         "bowlers_economy": bowler_list["sorted_by_economy"],
+        "bowlers_wicketsB": bowler_listB["sorted_by_wickets"],
+        "bowlers_runsB": bowler_listB["sorted_by_runs"],
+        "bowlers_economyB": bowler_listB["sorted_by_economy"],
         "extras": extras,
         "overs": over_result,
         "batterVsBowler": result,
         "batterVsBowlerB": resultB,
         "partnerships": partnerships,
-        "partnershipsB": partnershipsB
+        "partnershipsB": partnershipsB,
+
+        "predictingData": predictingdata
         
     }
 
