@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import CricketWinPredictor from "./WinPredictor";
+import DSA2Analysis from './dsa';
 
 const CricketAnalyzer = () => {
   const [selectedBattingStat, setSelectedBattingStat] = useState(null);
@@ -18,6 +19,7 @@ const CricketAnalyzer = () => {
   const [selectedBatter, setSelectedBatter] = useState(null);
   const [matchData, setMatchData] = useState();
   const [extras, setExtras] = useState(null);
+  const [dsa2Data, setDsa2Data] = useState(null);
   const[bowlerBRuns, setBowlerBRuns] = useState(null);
   const[bowlerBWickets, setBowlerBWickets] = useState(null);
   const[bowlerBEconomy, setBowlerBEconomy] = useState(null);
@@ -117,6 +119,17 @@ const CricketAnalyzer = () => {
             teamB: data.batterVsBowler,
           },
         });
+
+        setDsa2Data({
+          graph_analysis: data.graph_analysis,
+          over_analysis: data.over_analysis,
+          bst_search: data.bst_search,
+          player_search: data.player_search,
+          optimal_bowling_allocation: data.optimal_bowling_allocation,
+          pattern_detection: data.pattern_detection,
+          batter_clusters: data.batter_clusters,
+          next_bowler_recommendation: data.next_bowler_recommendation
+        });
       } catch (error) {
         console.error("Error fetching cricket analysis:", error);
       }
@@ -178,7 +191,7 @@ const CricketAnalyzer = () => {
 
   return (
     matchData ? (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-blue-50 p-6">
       <div className=" mx-auto">
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 rounded-2xl shadow-2xl p-8 mb-8 text-white">
@@ -813,6 +826,12 @@ const CricketAnalyzer = () => {
           </div>
         </div>
       </div>
+      {/* DSA 2.0 Advanced Analysis */}
+      <DSA2Analysis 
+        dsa2Data={dsa2Data}
+        teamAName={matchData.teamA.name}
+        teamBName={matchData.teamB.name}
+      />
     </div>
       </div>
     </div>
