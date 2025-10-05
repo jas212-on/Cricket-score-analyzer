@@ -18,8 +18,8 @@ import { CricketWinPredictor } from './WinPredictor';
 import DSA2Analysis from "./dsa";
 
 const CricketAnalyzer = () => {
-  const [selectedBattingStat, setSelectedBattingStat] = useState(null);
-  const [selectedBowlingStat, setSelectedBowlingStat] = useState(null);
+  const [selectedBattingStat, setSelectedBattingStat] = useState("runs");
+  const [selectedBowlingStat, setSelectedBowlingStat] = useState("wickets");
   const [selectedTeam, setSelectedTeam] = useState("teamA");
   const [selectedBatter, setSelectedBatter] = useState(null);
   const [activeSection, setActiveSection] = useState("overview");
@@ -238,13 +238,13 @@ const CricketAnalyzer = () => {
             </div>
             <div className="flex gap-4 mb-6">
               <button
-                onClick={() => { setSelectedTeam("teamA"); setSelectedBattingStat(null); }}
+                onClick={() => { setSelectedTeam("teamA"); setSelectedBattingStat("runs"); }}
                 className={`px-6 py-3 rounded-lg font-bold transition-all ${selectedTeam === "teamA" ? "bg-green-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
               >
                 {matchData.teamA.name}
               </button>
               <button
-                onClick={() => { setSelectedTeam("teamB"); setSelectedBattingStat(null); }}
+                onClick={() => { setSelectedTeam("teamB"); setSelectedBattingStat("runs"); }}
                 className={`px-6 py-3 rounded-lg font-bold transition-all ${selectedTeam === "teamB" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
               >
                 {matchData.teamB.name}
@@ -301,13 +301,13 @@ const CricketAnalyzer = () => {
             </div>
             <div className="flex gap-4 mb-6">
               <button
-                onClick={() => { setSelectedTeam("teamA"); setSelectedBowlingStat(null); }}
+                onClick={() => { setSelectedTeam("teamA"); setSelectedBowlingStat("wickets"); }}
                 className={`px-6 py-3 rounded-lg font-bold transition-all ${selectedTeam === "teamA" ? "bg-green-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
               >
                 {matchData.teamA.name}
               </button>
               <button
-                onClick={() => { setSelectedTeam("teamB"); setSelectedBowlingStat(null); }}
+                onClick={() => { setSelectedTeam("teamB"); setSelectedBowlingStat("wickets"); }}
                 className={`px-6 py-3 rounded-lg font-bold transition-all ${selectedTeam === "teamB" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
               >
                 {matchData.teamB.name}
