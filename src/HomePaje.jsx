@@ -68,11 +68,12 @@ const CricketAnalyzer = () => {
     return null;
   };
 
-  const API_URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : "http://127.0.0.1:8000";
 
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
+        const API_URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : "http://127.0.0.1:8000";
+        console.log(API_URL)
         const response = await fetch(`${API_URL}/cricket-analysis`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
