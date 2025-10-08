@@ -33,6 +33,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+@app.get("/")
+def root():
+    return {"message": "FastAPI backend is running!"}
+
+
 # root endpoint
 @app.post("/cricket-analysis")
 def cricket_analysis_api():
