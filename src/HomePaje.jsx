@@ -72,7 +72,7 @@ const CricketAnalyzer = () => {
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        const API_URL = process.env.REACT_APP_API_URL;
+        const API_URL = "https://cricket-score-analyzer-backend.onrender.com";
         console.log(API_URL)
         const response = await fetch(`${API_URL}/cricket-analysis`, {
           method: "POST",
